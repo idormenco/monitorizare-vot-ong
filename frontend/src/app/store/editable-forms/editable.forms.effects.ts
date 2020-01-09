@@ -40,7 +40,7 @@ export class EditableFormsEffects {
     .ofType(EditableFormsActionTypes.LOAD_BY_ID)
     .map((action: EditableFormsLoadByIdAction) => action.payload)
     .concatMap(id => this.service.loadFormById(id))
-    .map((sections: EditableFormSection[]) => new EditableFormsLoadByIdCompleteAction(sections));
+    .map(x => new EditableFormsLoadByIdCompleteAction(x.formId, x.sections));
 
   @Effect()
   saveOptions = this.actions

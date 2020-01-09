@@ -28,14 +28,19 @@ export class EditableFormsService {
       .toArray();
   };
 
-  public loadFormById(id: string): Observable<EditableFormSection[]> {
+  public loadFormById(id: number): Observable<{ formId: number, sections: EditableFormSection[] }> {
     return this.http.get<BackendFormSection[]>(this.baseUrl + API.forms(id))
-      .map((sections: BackendFormSection[]) => (
-        (sections || []).map(s => new EditableFormSection(s.id, s.code, s.uniqueId, s.description,
-          (s.questions || []).map((q: BackendFormQuestion) => new EditableFormQuestion(q.id, q.idSection, q.code, q.text, q.questionType,
-            (q.optionsToQuestions || []).map((o: BackendFormQuestionOption) => new EditableFormQuestionOption(o.idOption, o.text, o.isFreeText)))))
-        ))
-      );
+      .map((sections: BackendFormSection[]) => {
+        return { formId: id, sections: (sections || []).map(s => new EditableFormSection(s.id, s.code, s.uniqueId, s.description, this.getQuestions(s))) };
+      });
+  }
+
+  private getQuestions(s: BackendFormSection): EditableFormQuestion[] {
+    return (s.questions || []).map((q: BackendFormQuestion) => new EditableFormQuestion(q.id, q.idSection, q.code, q.text, q.questionType, this.getOptionsToQuestions(q)));
+  }
+
+  private getOptionsToQuestions(q: BackendFormQuestion): EditableFormQuestionOption[] {
+    return (q.optionsToQuestions || []).map((o: BackendFormQuestionOption) => new EditableFormQuestionOption(o.idOption, o.text, o.isFreeText));
   }
 
   public loadAllFormsOptions(): Observable<EditableFormQuestionOption[]> {
@@ -53,13 +58,13 @@ export class EditableFormsService {
       .map( (o: BackendFormOption) => new EditableFormQuestionOption(o.id, o.text, o.isFreeText));
   }
 
-  public saveFormSet(formSet: EditableForm): Observable<string>{
+  public saveFormSet(formSet: EditableForm): Observable<number>{
     let form: BackendForm = new BackendForm(formSet.code, formSet.description,
       formSet.sections.map(section => new BackendFormSection(section.code, section.description,
         section.questions.map(question => new BackendFormQuestion(formSet.code, question.code, question.typeId, question.text,
           question.options.map(option => new BackendFormQuestionOption(option.id)))))));
     console.log(`Saving the form ${formSet}: with the following serialization:\n`, JSON.stringify(form, null, 2));
-    return this.http.post<string>(this.baseUrl + API.forms(), form);
+    return this.http.post<number>(this.baseUrl + API.forms(), form);
   }
 }
 

@@ -32,11 +32,11 @@ export class EditableFormsLoadAllCompleteAction implements Action{
 }
 export class EditableFormsLoadByIdAction implements Action{
   readonly type = EditableFormsActionTypes.LOAD_BY_ID;
-  constructor(public payload: string){}
+  constructor(public payload: number){}
 }
 export class EditableFormsLoadByIdCompleteAction implements Action {
   readonly type = EditableFormsActionTypes.LOAD_BY_ID_COMPLETE;
-  constructor(public payload: EditableFormSection[]){}
+  constructor(public formId: number ,public payload: EditableFormSection[]){}
 }
 export class EditableFormsCreateAction implements Action{
   readonly type = EditableFormsActionTypes.CREATE_FORM_SET;

@@ -23,7 +23,7 @@ export function editableFormsReducer(state = initialState, $action: EditableForm
     case EditableFormsActionTypes.LOAD_ALL_COMPLETE:
       return loadAllComplete(state, $action.payload);
     case EditableFormsActionTypes.LOAD_BY_ID_COMPLETE:
-      return loadedFormSectionComplete(state, $action.payload);
+      return loadedFormSectionComplete(state,$action.formId, $action.payload);
     case EditableFormsActionTypes.CREATE_FORM_SET_COMPLETE:
       return createdFormSet(state, $action);
     case EditableFormsActionTypes.ADD_FORM_TO_SET:
@@ -63,25 +63,22 @@ const loadAllComplete = (state: EditableFormsState, formSets: EditableForm[]) =>
   }
 };
 
-const loadedFormSectionComplete = (state, sections: EditableFormSection[]) => {
-  let formCode: string = sections
-    .filter(section => section.code)
-    .map(section => section.code)
-    .find(() => true);
-  if (formCode){
-    let editedFormIndex: number = state.forms.findIndex(f => f.code === formCode);
+const loadedFormSectionComplete = (state, formId: number, sections: EditableFormSection[]) => {    
+  if (formId){
+    debugger;
+    let editedFormIndex: number = state.forms.findIndex(f => f.id === formId);
     if (editedFormIndex >= 0){
       let savedSections = sections.filter(s => s.id >= 0);
       let existingForm: EditableForm = state.forms[editedFormIndex];
       let futureForm: EditableForm = new EditableForm(existingForm.id, existingForm.code, savedSections,
         existingForm.description, existingForm.version, existingForm.published);
-      console.log(`Replacing existing form(${formCode}) with a new one that has the following sections: `, savedSections);
+      console.log(`Replacing existing form(${formId}) with a new one that has the following sections: `, savedSections);
       return {
         ...state,
         forms: replaceAt(state.forms, editedFormIndex, futureForm)
       }
     }else{
-      console.log(`There is no Form with the code: ${formCode}`);
+      console.log(`There is no Form with the code: ${formId}`);
       return state;
     }
   }else{
