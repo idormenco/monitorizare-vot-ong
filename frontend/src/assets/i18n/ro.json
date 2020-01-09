@@ -30,4 +30,11 @@
   "FROM": "De la",
   "TO": "Pana la", 
   "ANSWERS_DOWNLOAD_CONFIRMATION": "Esti sigur ca vrei sa lansezi cererea de descarcare a datelor?"
+  "FORMS": "Formulare",
+  "ADD_NEW_FORM_SET": "Adauga formular nou",
+  "ADD_NEW_FORM": "Adauga sectiune noua",
+  "ADD_NEW_QUESTION": "Adauga intrebare",
+  "SAVE_AS_DRAFT": "Salveaza temporar",
+  "PUBLISH_FORM": "Publica formular",
+  "ADD_NEW_OPTION": "Adauga optiune noua"
 }

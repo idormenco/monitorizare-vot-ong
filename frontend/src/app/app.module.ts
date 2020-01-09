@@ -16,6 +16,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { NotificationsService } from './services/notifications.service';
 import { AnswersService } from './services/answers.service';
 import { ModalModule } from 'ngx-bootstrap';
+import {EditableFormsService} from './services/editable.forms.service';
 
 export function HttpLoaderFactory(httpClient: HttpClient) {
   return new TranslateHttpLoader(httpClient);
@@ -39,9 +40,11 @@ export function HttpLoaderFactory(httpClient: HttpClient) {
         deps: [HttpClient]
       }
     }),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    BrowserAnimationsModule
   ],
   providers: [
+    EditableFormsService,
     ObserversService,
     NotificationsService, 
     AnswersService

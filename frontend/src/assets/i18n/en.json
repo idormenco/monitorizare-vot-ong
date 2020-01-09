@@ -47,4 +47,11 @@
   "FROM": "From",
   "TO": "To",
   "ANSWERS_DOWNLOAD_CONFIRMATION": "Are you sure you want to launch a data dowload request?"
+  "FORMS": "Forms",
+  "ADD_NEW_FORM_SET": "Add new form set",
+  "ADD_NEW_FORM": "Add new form",
+  "ADD_NEW_QUESTION": "Add new question",
+  "SAVE_AS_DRAFT": "Save as draft",
+  "PUBLISH_FORM": "Publish form",
+  "ADD_NEW_OPTION": "Add new option"
 }
