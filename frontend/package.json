@@ -46,13 +46,15 @@
     "ngx-toastr": "^8.10.2",
     "rxjs": "^6.5.4",
     "ts-helpers": "^1.1.1",
-    "zone.js": "^0.9.1"
+    "tslib": "^1.10.0",
+    "zone.js": "~0.9.1"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "~0.803.23",
     "@angular/cli": "^8.3.23",
     "@types/jasmine": "^2.8.16",
     "@types/node": "^6.14.7",
-    "codelyzer": "1.0.0-beta.1",
+    "codelyzer": "^5.0.1",
     "jasmine-core": "^2.4.1",
     "jasmine-spec-reporter": "^2.5.0",
     "karma": "1.2.0",
