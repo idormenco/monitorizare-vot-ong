@@ -6,7 +6,7 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
   styleUrls: ['./question-menu.component.scss']
 })
 export class QuestionMenuComponent implements OnInit {
-  @Output() addQuestion = new EventEmitter();
+
   @Output() saveFormSection = new EventEmitter();
   constructor() { }
 
@@ -15,10 +15,6 @@ export class QuestionMenuComponent implements OnInit {
 
   addNewFormSection() {
     console.log('new form section');
-  }
-
-  addNewQuestion(){
-    this.addQuestion.emit();
   }
 
   saveAsDraft() {

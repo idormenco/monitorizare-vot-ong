@@ -55,11 +55,11 @@ export class EditableFormsDeleteFormAction implements Action{
 }
 export class EditableFormsAddFormQuestionAction implements Action{
   readonly type = EditableFormsActionTypes.ADD_QUESTION_TO_FORM;
-  constructor(public payload: {formSet: EditableForm, formId: number}) {}
+  constructor(public payload: {formSet: EditableForm, sectionId: number}) {}
 }
 export class EditableFormsDeleteFormQuestionAction implements Action{
   readonly type = EditableFormsActionTypes.DELETE_QUESTION_FROM_FORM;
-  constructor(public payload: {formSet: EditableForm, formId: number, questionId: number}) {}
+  constructor(public payload: {formSet: EditableForm, sectionId: number, questionId: number}) {}
 }
 export class EditableFormsSaveFormSectionAction implements Action{
   readonly type = EditableFormsActionTypes.SAVE_FORM_SET;

@@ -97,11 +97,11 @@ export let appRoutes: Routes = [
         canActivate: [AuthGuard, EditableFormsGuard],
         component: EditableFormsComponent
     }, {
-        path: 'forms/:id',
+        path: 'forms/:formId',
         canActivate: [AuthGuard, EditableFormSectionsGuard],
         component: EditableFormSectionsComponent
     }, {
-        path: 'forms/:formSetId/:formId/questions',
+        path: 'forms/:formId/:formSectionId/questions',
         canActivate: [AuthGuard, EditableFormSectionQuestionsGuard],
         component: FormSectionQuestionsComponent
     }

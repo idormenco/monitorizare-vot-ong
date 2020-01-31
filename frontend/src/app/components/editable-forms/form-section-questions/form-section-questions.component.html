@@ -2,33 +2,38 @@
   <div style="display: flex; flex-direction: column; padding-bottom: 10px;">
     <h3>{{ 'FORM' | translate }} - {{section.code}}</h3>
     <mat-form-field>
-      <input matInput [(ngModel)]="section.description">
+      <input matInput
+        [(ngModel)]="section.description">
     </mat-form-field>
-    <button mat-button color="primary" routerLink="../.." style="align-self: flex-start;" >Back</button>
+    <button mat-button
+      color="primary"
+      routerLink="../.."
+      style="align-self: flex-start;">Back</button>
   </div>
 </div>
 
-<div *ngIf="section && section.questions.length > 0" class="page">
+<div *ngIf="section && section.questions.length > 0"
+  class="page">
   <div class="card-container">
-    <app-question-card
+    <app-question-card *ngFor="let question of section.questions"
       class="question-card"
-      [editMode]="editMode"
       [question]="question"
       [section]="section"
-      (deleteQuestion)="onDeleteQuestion($event)"
-      *ngFor="let question of section.questions">
+      (deleteQuestion)="onDeleteQuestion($event)">
     </app-question-card>
+
+    <div class="button-container">
+      <button class="btn btn-success pull-right" (click)="onAddQuestion()">{{ 'ADD_NEW_QUESTION' | translate }}</button>
+    </div>
   </div>
-  <app-question-menu
-    *ngIf="editMode === true"
-    (addQuestion)="onAddQuestion()"
+  <app-question-menu *ngIf="editMode === true"
     (saveFormSection)="onSaveFormSection()"
     class="question-menu-container">
   </app-question-menu>
 </div>
-<div *ngIf="!section || section.questions.length === 0" class="page">
-  <app-question-menu
-    *ngIf="editMode === true"
+<div *ngIf="!section || section.questions.length === 0"
+  class="page">
+  <app-question-menu *ngIf="editMode === true"
     (addQuestion)="onAddQuestion()"
     class="question-menu-container">
   </app-question-menu>

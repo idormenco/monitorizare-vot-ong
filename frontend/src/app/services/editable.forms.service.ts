@@ -22,9 +22,10 @@ export class EditableFormsService {
   }
 
   public loadAllForms(): Observable<EditableForm[]> {
+    // TODO change here to use url concat
     return this.http.get<FormVersions>(this.baseUrl + API.forms())
       .flatMap(versions => versions.formVersions)
-      .map(f => new EditableForm(f.id, f.code, f.formSections || [], f.description, f.ver))
+      .map(f => new EditableForm(f.id, f.code, f.formSections || [], f.description, f.ver,f.order, f.diaspora, f.draft))
       .toArray();
   };
 
@@ -40,13 +41,13 @@ export class EditableFormsService {
   }
 
   private getOptionsToQuestions(q: BackendFormQuestion): EditableFormQuestionOption[] {
-    return (q.optionsToQuestions || []).map((o: BackendFormQuestionOption) => new EditableFormQuestionOption(o.idOption, o.text, o.isFreeText));
+    return (q.optionsToQuestions || []).map((o: BackendFormQuestionOption) => new EditableFormQuestionOption(o.idOption, o.text, o.hint, o.isFreeText , o.isFlagged));
   }
 
   public loadAllFormsOptions(): Observable<EditableFormQuestionOption[]> {
     return this.http.get<BackendFormOption[]>(this.baseUrl + API.options())
       .map((options: BackendFormOption[]) => (
-        options.map(o => new EditableFormQuestionOption(o.id, o.text, o.isFreeText))
+        options.map(o => new EditableFormQuestionOption(o.id, o.text, o.hint ,o.isFreeText,o.isFlagged))
       ));
   };
 
@@ -55,7 +56,7 @@ export class EditableFormsService {
     return this.http.post<BackendFormOption>(this.baseUrl + API.createOption(), {
       text: option.text
     })
-      .map( (o: BackendFormOption) => new EditableFormQuestionOption(o.id, o.text, o.isFreeText));
+      .map( (o: BackendFormOption) => new EditableFormQuestionOption(o.id, o.text, o.hint, o.isFreeText , o.isFlagged));
   }
 
   public saveFormSet(formSet: EditableForm): Observable<number>{
@@ -72,8 +73,9 @@ class BackendFormOption{
   constructor(
     public id: number,
     public text: string,
+    public hint: string,
     public isFreeText: boolean,
-    public hint: string
+    public isFlagged: boolean,
   ){}
 }
 
@@ -81,7 +83,9 @@ class BackendFormQuestionOption {
   constructor(
     public idOption: number,
     public text: string = undefined,
-    public isFreeText: boolean = false
+    public hint: string= undefined,
+    public isFreeText: boolean = false,
+    public isFlagged: boolean = false
   ) {
   }
 }
@@ -116,7 +120,10 @@ class BackendForm {
     public description: string,
     public formSections: BackendFormSection[],
     public id: number = undefined,
-    public ver: number = undefined
+    public ver: number = undefined,
+    public order: number = undefined,
+    public diaspora: boolean = undefined,
+    public draft: boolean = undefined,
   ) {
   }
 }

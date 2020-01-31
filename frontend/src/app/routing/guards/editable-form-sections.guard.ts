@@ -8,7 +8,7 @@ import {Injectable} from '@angular/core';
 export class EditableFormSectionsGuard implements CanActivate{
   constructor(private store: Store<AppState>) {}
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    this.store.dispatch(new EditableFormsLoadByIdAction(+route.params.id));
+    this.store.dispatch(new EditableFormsLoadByIdAction(+route.params.formId));
     return true;
   }
 }

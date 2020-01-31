@@ -1,10 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute, Params} from '@angular/router';
-import {Store} from '@ngrx/store';
-import {AppState} from '../../../store/store.module';
-import {Subscription} from 'rxjs';
-import {EditableFormsAddFormToSetAction, EditableFormsDeleteFormAction,} from '../../../store/editable-forms/editable.forms.actions';
-import {EditableForm} from '../../../models/editable.form.model';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../../store/store.module';
+import { Subscription } from 'rxjs';
+import { EditableFormsAddFormToSetAction, EditableFormsDeleteFormAction, } from '../../../store/editable-forms/editable.forms.actions';
+import { EditableForm } from '../../../models/editable.form.model';
 
 @Component({
   selector: 'app-editable-form-sections',
@@ -13,10 +13,10 @@ import {EditableForm} from '../../../models/editable.form.model';
 })
 export class EditableFormSectionsComponent implements OnInit, OnDestroy {
   private subs: Subscription[] = [];
-  selectedFormSet: EditableForm;
+  selectedForm: EditableForm;
 
   constructor(private store: Store<AppState>,
-              private activeRoute: ActivatedRoute) {
+    private activeRoute: ActivatedRoute) {
   }
 
   ngOnInit() {
@@ -24,10 +24,15 @@ export class EditableFormSectionsComponent implements OnInit, OnDestroy {
       this.activeRoute.params
         .switchMap((params: Params) => this.store
           .select(s => s.editableForms.forms)
-          .concatMap( forms => forms)
-          .filter( form => form.id === parseInt(params.id))
+          .concatMap(forms => forms)
+          .filter(form => {
+            return form.id === parseInt(params.formId);
+          })
         )
-        .subscribe(selectedFormSet => this.selectedFormSet = selectedFormSet)
+        .subscribe(selectedFormSet => {
+          console.log(selectedFormSet);
+          this.selectedForm = selectedFormSet;
+        })
     );
   }
 
@@ -35,13 +40,13 @@ export class EditableFormSectionsComponent implements OnInit, OnDestroy {
     this.subs.forEach(s => s.unsubscribe());
   }
 
-  addNewForm() {
-    this.store.dispatch(new EditableFormsAddFormToSetAction(this.selectedFormSet));
+  addNewFormSection() {
+    this.store.dispatch(new EditableFormsAddFormToSetAction(this.selectedForm));
   }
 
   deleteFormSection(formSectionId: number) {
     this.store.dispatch(new EditableFormsDeleteFormAction({
-      formSet: this.selectedFormSet,
+      formSet: this.selectedForm,
       formId: formSectionId
     }));
   }

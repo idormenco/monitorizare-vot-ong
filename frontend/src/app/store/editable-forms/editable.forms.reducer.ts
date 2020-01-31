@@ -1,10 +1,10 @@
-import {EditableForm} from '../../models/editable.form.model';
-import {EditableFormsActions, EditableFormsActionTypes} from './editable.forms.actions';
-import {decode, encode, replaceAt} from '../../shared/functions';
-import {EditableFormSection} from '../../models/editable.form.section.model';
-import {EditableFormQuestionOption} from '../../models/editable.form.question.option.model';
-import {EditableFormQuestion} from '../../models/editable.form.question.model';
-import {QuestionType} from '../../models/editable.form.question.type';
+import { EditableForm } from '../../models/editable.form.model';
+import { EditableFormsActions, EditableFormsActionTypes } from './editable.forms.actions';
+import { decode, encode, replaceAt } from '../../shared/functions';
+import { EditableFormSection } from '../../models/editable.form.section.model';
+import { EditableFormQuestionOption } from '../../models/editable.form.question.option.model';
+import { EditableFormQuestion } from '../../models/editable.form.question.model';
+import { QuestionType } from '../../models/editable.form.question.type';
 
 export class EditableFormsState {
   forms: EditableForm[];
@@ -23,7 +23,7 @@ export function editableFormsReducer(state = initialState, $action: EditableForm
     case EditableFormsActionTypes.LOAD_ALL_COMPLETE:
       return loadAllComplete(state, $action.payload);
     case EditableFormsActionTypes.LOAD_BY_ID_COMPLETE:
-      return loadedFormSectionComplete(state,$action.formId, $action.payload);
+      return loadedFormSectionComplete(state, $action.formId, $action.payload);
     case EditableFormsActionTypes.CREATE_FORM_SET_COMPLETE:
       return createdFormSet(state, $action);
     case EditableFormsActionTypes.ADD_FORM_TO_SET:
@@ -63,25 +63,24 @@ const loadAllComplete = (state: EditableFormsState, formSets: EditableForm[]) =>
   }
 };
 
-const loadedFormSectionComplete = (state, formId: number, sections: EditableFormSection[]) => {    
-  if (formId){
-    debugger;
+const loadedFormSectionComplete = (state, formId: number, sections: EditableFormSection[]) => {
+  if (formId) {
     let editedFormIndex: number = state.forms.findIndex(f => f.id === formId);
-    if (editedFormIndex >= 0){
+    if (editedFormIndex >= 0) {
       let savedSections = sections.filter(s => s.id >= 0);
       let existingForm: EditableForm = state.forms[editedFormIndex];
       let futureForm: EditableForm = new EditableForm(existingForm.id, existingForm.code, savedSections,
-        existingForm.description, existingForm.version, existingForm.published);
+        existingForm.description, existingForm.version, existingForm.order, existingForm.diaspora, existingForm.draft);
       console.log(`Replacing existing form(${formId}) with a new one that has the following sections: `, savedSections);
       return {
         ...state,
         forms: replaceAt(state.forms, editedFormIndex, futureForm)
       }
-    }else{
+    } else {
       console.log(`There is no Form with the code: ${formId}`);
       return state;
     }
-  }else{
+  } else {
     console.log(`There is no code defined on the form sections received: `, sections);
     return state;
   }
@@ -93,7 +92,6 @@ const createdFormSet = (state, $action) => {
     forms: [$action.payload, ...state.forms]
   }
 };
-
 
 const createNewForm = (state) => {
   let newForm: EditableForm = new EditableForm(findNextId(state.forms), findNextCode(state.forms), [], 'This is new form');
@@ -113,34 +111,34 @@ const addNewFormSection = (state, formSet: EditableForm) => {
     new EditableFormSection(findNextId(formSet.sections), formSet.code, findNextUniqueId(formSet.sections), 'This is a new section')
   ];
   let updatedFormSet: EditableForm = new EditableForm(formSet.id, formSet.code, updatedFormSections,
-    formSet.description, formSet.version, formSet.published);
+    formSet.description, formSet.version, formSet.order, formSet.diaspora, formSet.draft);
   return {
     ...state,
     forms: replaceAt(state.forms, existingFormIndex, updatedFormSet)
   }
 };
 
-const deleteFormSection = (state, {formSet, formId}) => {
+const deleteFormSection = (state, { formSet, formId }) => {
   let existingFormIndex: number = state.forms.findIndex(f => f.id === formSet.id);
   let existingForm: EditableForm = state.forms[existingFormIndex];
   let updatedForm: EditableForm = new EditableForm(existingForm.id, existingForm.code, existingForm.sections.filter(s => s.id !== formId),
-    existingForm.description, existingForm.version, existingForm.published);
+    existingForm.description, existingForm.version, existingForm.order, existingForm.diaspora, existingForm.draft);
   return {
     ...state,
     forms: replaceAt(state.forms, existingFormIndex, updatedForm)
   };
 };
 
-const addNewQuestionToFormSection = (state, {formSet, formId}) => {
+const addNewQuestionToFormSection = (state, { formSet, sectionId }) => {
   let existingFormIndex: number = state.forms.findIndex(f => f.id === formSet.id);
   let existingFormSet: EditableForm = state.forms[existingFormIndex];
-  let existingFormSectionIndex: number = existingFormSet.sections.findIndex(s => s.id === formId);
+  let existingFormSectionIndex: number = existingFormSet.sections.findIndex(s => s.id === sectionId);
   let existingFormSection: EditableFormSection = existingFormSet.sections[existingFormSectionIndex];
   let updateFormSection: EditableFormSection = new EditableFormSection(existingFormSection.id, existingFormSection.code, existingFormSection.uniqueId,
     existingFormSection.description, [
-      ...existingFormSection.questions,
-      new EditableFormQuestion(findNextId(existingFormSection.questions), formId, existingFormSet.code, 'This is new question', QuestionType.SINGLE_CHOICE.id)
-    ]);
+    ...existingFormSection.questions,
+    new EditableFormQuestion(findNextId(existingFormSection.questions), sectionId, existingFormSet.code, 'This is new question', QuestionType.SINGLE_CHOICE.id)
+  ]);
   let updatedFormSet: EditableForm = new EditableForm(formSet.id, formSet.code,
     replaceAt(existingFormSet.sections, existingFormSectionIndex, updateFormSection),
     formSet.description, formSet.version, formSet.published);
@@ -150,16 +148,15 @@ const addNewQuestionToFormSection = (state, {formSet, formId}) => {
   };
 };
 
-const deleteQuestionFromSection = (state, {formSet, formId, questionId}) => {
+const deleteQuestionFromSection = (state, { formSet, sectionId, questionId }) => {
   let existingFormIndex: number = state.forms.findIndex(f => f.id === formSet.id);
   let existingFormSet: EditableForm = state.forms[existingFormIndex];
-  let existingFormSectionIndex: number = existingFormSet.sections.findIndex(s => s.id === formId);
+  let existingFormSectionIndex: number = existingFormSet.sections.findIndex(s => s.id === sectionId);
   let existingFormSection: EditableFormSection = existingFormSet.sections[existingFormSectionIndex];
-  let updateFormSection: EditableFormSection = new EditableFormSection(existingFormSection.id, existingFormSection.code, existingFormSection.uniqueId,
-    existingFormSection.description, existingFormSection.questions.filter(q => q.id !== questionId));
-  let updatedFormSet: EditableForm = new EditableForm(formSet.id, formSet.code,
-    replaceAt(existingFormSet.sections, existingFormSectionIndex, updateFormSection),
-    formSet.description, formSet.version, formSet.published);
+  let updateFormSection: EditableFormSection = new EditableFormSection(existingFormSection.id, existingFormSection.code, existingFormSection.uniqueId, existingFormSection.description, existingFormSection.questions.filter(q => q.id !== questionId));
+
+  let updatedFormSet: EditableForm = new EditableForm(formSet.id, formSet.code, replaceAt(existingFormSet.sections, existingFormSectionIndex, updateFormSection), formSet.description, formSet.version, formSet.published);
+
   return {
     ...state,
     forms: replaceAt(state.forms, existingFormIndex, updatedFormSet)
@@ -192,8 +189,8 @@ const loadOptionByIdComplete = (state, option: EditableFormQuestionOption) => {
   let updatedSavingForm: EditableForm = state.savingForm;
   state.savingForm.sections.forEach((section: EditableFormSection, sectionIndex: number) => {
     section.questions.forEach((question: EditableFormQuestion, questionIndex: number) => {
-      let optionIndex:number = question.options.findIndex(o => o.text === option.text);
-      if (optionIndex >= 0){
+      let optionIndex: number = question.options.findIndex(o => o.text === option.text);
+      if (optionIndex >= 0) {
         let updatedQuestion: EditableFormQuestion = new EditableFormQuestion(question.id, question.formId, question.code, question.text,
           question.typeId, replaceAt(question.options, optionIndex, option));
         let updatedSection: EditableFormSection = new EditableFormSection(section.id, section.code, section.uniqueId, section.description,
@@ -214,14 +211,15 @@ const loadOptionByIdComplete = (state, option: EditableFormQuestionOption) => {
   };
 };
 
-const findNextId = (items) => ( items.map(i => i.id).reduce((max, val) => Math.max(max, val), 0) + 1 );
-const findNextCode = (items) => ( encode(items
+const findNextId = (items) => (items.map(i => i.id).reduce((max, val) => Math.max(max, val), 0) + 1);
+const findNextCode = (items) => (encode(items
   .map(f => f.code)
   .map(code => decode(code))
   .filter(x => !isNaN(x))
   .reduce((max, val) => Math.max(max, val), 0) + 1));
-const findNextUniqueId = (items) => (encode(items
-    .map(f => f.uniqueId)
-    .map(code => decode(code))
-    .filter(x => !isNaN(x))
-    .reduce((max, val) => Math.max(max, val), 0) + 1));
+
+const findNextUniqueId = (items: EditableFormSection[]) => (encode(items
+  .map(f => f.code)
+  .map(code => decode(code))
+  .filter(x => !isNaN(x))
+  .reduce((max, val) => Math.max(max, val), 0) + 1));

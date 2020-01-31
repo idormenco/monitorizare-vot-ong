@@ -8,5 +8,5 @@ import { EnvironmentConfig } from 'typings';
 export const environment:EnvironmentConfig = {
   production: false,
   observerGuideUrl: 'http://monitorizare-vot-ghid.azurewebsites.net/',
-  apiUrl: ''
+  apiUrl: 'https://localhost:44378'
 };

@@ -6,7 +6,7 @@ import {AppState} from '../../store/store.module';
 import {EditableFormsCreateAction} from '../../store/editable-forms/editable.forms.actions';
 
 const draftsFirst = (left, right) => {
-  return left.published ? 1 : right.published ? -1 : 0;
+  return left.draft ? 1 : right.draft ? -1 : 0;
 };
 
 @Component({
@@ -32,7 +32,7 @@ export class EditableFormsComponent implements OnInit, OnDestroy {
     this.sub.unsubscribe();
   }
 
-  createNewFormSet() {
+  createNewForm() {
     this.store.dispatch(new EditableFormsCreateAction());
   }
 }

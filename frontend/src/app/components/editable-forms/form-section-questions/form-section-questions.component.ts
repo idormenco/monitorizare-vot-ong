@@ -21,7 +21,7 @@ export class FormSectionQuestionsComponent implements OnInit, OnDestroy {
   private formSet: EditableForm;
   private section: EditableFormSection;
   private subs: Subscription[] = [];
-  private editMode: boolean = false;
+  editMode: boolean = false;
 
   constructor(private store: Store<AppState>,
               private activeRoute: ActivatedRoute) {
@@ -38,25 +38,23 @@ export class FormSectionQuestionsComponent implements OnInit, OnDestroy {
   private loadFormSet = () => {
     return this.activeRoute.params
       .switchMap((params: Params) => {
-        console.log('Params for questions got changed:', params);
+        console.log(' loadFormSet Params for questions got changed:', params);
         return this.store.select(s => s.editableForms.forms)
           .concatMap(forms => forms)
-          .filter( f => f.id === parseInt(params.formSetId))
+          .filter( f => f.id === parseInt(params.formId))
       })
-      .subscribe(selectedFormSet => {
-        this.formSet = selectedFormSet;
-      })
+      .subscribe(selectedFormSet => this.formSet = selectedFormSet)
   };
 
   private loadFormSection = () => {
     return this.activeRoute.params
       .switchMap((params: Params) => {
-        console.log('Params for questions got changed:', params);
+        console.log('loadFormSet Params for questions got changed:', params);
         return this.store.select(s => s.editableForms.forms)
           .concatMap(forms => forms)
-          .filter(f => f.id === parseInt(params.formSetId))
+          .filter(f => f.id === parseInt(params.formId))
           .flatMap(forms => forms.sections)
-          .filter(section => section.uniqueId === params.formId);
+          .filter(section => section.id === parseInt(params.formSectionId));
       })
       .subscribe(selectedFormSection => {
         console.log('We received a form: ', selectedFormSection);
@@ -72,7 +70,7 @@ export class FormSectionQuestionsComponent implements OnInit, OnDestroy {
   onAddQuestion() {
     this.store.dispatch(new EditableFormsAddFormQuestionAction({
       formSet: this.formSet,
-      formId: this.section.id
+      sectionId: this.section.id
     }));
   }
 
@@ -84,7 +82,7 @@ export class FormSectionQuestionsComponent implements OnInit, OnDestroy {
   onDeleteQuestion(questionId) {
     this.store.dispatch(new EditableFormsDeleteFormQuestionAction({
       formSet: this.formSet,
-      formId: this.section.id,
+      sectionId: this.section.id,
       questionId: questionId
     }));
   }
